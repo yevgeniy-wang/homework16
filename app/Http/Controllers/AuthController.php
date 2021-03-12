@@ -24,29 +24,24 @@ class AuthController
             'password' => ['required', 'min:8'],
         ]);
 
-        if (User::where('name', $request['name'])->get()->count()) {
+        if (null === ($user = User::where('name', $data['name'])->first())) {
 
-            if (Auth::attempt($data)) {
-
-                if (Hash::needsRehash(User::find(Auth::id())->password)) {
-                    $user = User::find(Auth::id());
-                    $user->password
-                        = Hash::make($request->only('password')['password']);
-                    $user->save();
-                }
-
-                return redirect()->route('home');
-            }
-        } else {
-            $data['password']
-                = Hash::make($request->only('password')['password']);
+            $data['password'] = Hash::make($data['password']);
 
             $user = User::create($data);
 
-            if (Auth::attempt($request->only('name', 'password'))) {
+            Auth::login($user);
 
-                return redirect()->route('home');
-            }
+            return redirect()->route('home')
+                ->with('success', 'You have successfully logged in');
+        }
+
+        if (Hash::check($data['password'], $user->password)) {
+
+            Auth::login($user);
+
+            return redirect()->route('home')
+                ->with('success', 'You have successfully logged in');
         }
 
         return back()->withErrors([
