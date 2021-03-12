@@ -14,16 +14,13 @@
 <body>
 <div class="container">
     <div class="row">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-9">
+            @yield('content')
+        </div>
+        <div class="col-3">
             @yield('auth')
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            @yield('content')
-        </div>
-    </div>
-</div>
 <!-- Optional JavaScript; choose one of the two! -->
 
 <!-- Option 1: Bootstrap Bundle with Popper -->

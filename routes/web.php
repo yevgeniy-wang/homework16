@@ -31,14 +31,14 @@ Route::middleware('auth')->group(function () {
         ->name('create');
     Route::post('/edit', [\App\Http\Controllers\AdController::class, 'store'])
         ->name('store');
-    Route::get('/delete/{id}',
+    Route::get('/delete/{ad}',
         [\App\Http\Controllers\AdController::class, 'destroy'])->name('delete');
-    Route::get('/edit/{id}',
+    Route::get('/edit/{ad}',
         [\App\Http\Controllers\AdController::class, 'edit'])
         ->name('edit');
-    Route::post('/edit/{id}',
+    Route::post('/edit/{ad}',
         [\App\Http\Controllers\AdController::class, 'update'])->name('update');
 });
 
-Route::get('/{id}', [\App\Http\Controllers\AdController::class, 'read'])
+Route::get('/{ad}', [\App\Http\Controllers\AdController::class, 'read'])
     ->name('read');

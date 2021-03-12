@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\Ad;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class AdController
 {
@@ -29,42 +30,53 @@ class AdController
         return redirect()->route('read', $ad->id)->with('success', "Ad \"{$ad->title}\" successfully saved");
     }
 
-    public function read($id)
+    public function read(Ad $ad)
     {
-        $ads[] = Ad::find($id);
+        $ads[] = $ad;
 
         return view('pages.index', compact('ads'));
     }
 
-    public function edit($id)
+    public function edit(Ad $ad)
     {
-        $ad = Ad::find($id);
-        $submit = false;
+        $response = Gate::inspect('update', $ad);
 
-        return view('ad.form', compact('ad', 'submit'));
+        if ($response->allowed()){
+
+            $submit = false;
+
+            return view('ad.form', compact('ad', 'submit'));
+        }
+        return redirect()->route('home');
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Ad $ad)
     {
-        $ad = Ad::find($id);
 
-        $data = $request->validate([
-            'title'       => ['required'],
-            'description' => ['required'],
-        ]);
+        $response = Gate::inspect('update', $ad);
 
+        if ($response->allowed()){
 
+            $data = $request->validate([
+                'title'       => ['required'],
+                'description' => ['required'],
+            ]);
 
-        $ad->update($data);
+            $ad->update($data);
 
-        return redirect()->route('read', $ad->id)->with('success', "Ad \"{$ad->title}\" successfully saved");;
+            return redirect()->route('read', $ad->id)->with('success', "Ad \"{$ad->title}\" successfully saved");
+        }
     }
 
-    public function destroy($id)
+    public function destroy(Ad $ad)
     {
-        $ad = Ad::find($id);
-        $ad->delete();
+        $response = Gate::inspect('delete', $ad);
 
-        return redirect()->route('home')->with('success', "Ad \"{$ad->title}\" successfully deleted");;
+        if ($response->allowed()){
+
+            $ad->delete();
+
+            return redirect()->route('home')->with('success', "Ad \"{$ad->title}\" successfully deleted");
+        }
     }
 }

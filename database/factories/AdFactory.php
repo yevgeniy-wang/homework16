@@ -23,7 +23,7 @@ class AdFactory extends Factory
     public function definition()
     {
         return [
-            'title'       => $this->faker->unique()->sentence(rand(3, 5)),
+            'title'       => $this->faker->sentence(rand(3, 5)),
             'description' => $this->faker->paragraph(rand(3, 5)),
             'user_id'     => User::factory(),
         ];
